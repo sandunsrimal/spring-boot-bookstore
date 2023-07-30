@@ -8,12 +8,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.example.bookstore.entity.Book;
+import com.example.bookstore.entity.MyBookList;
 import com.example.bookstore.service.BookService;
+import com.example.bookstore.service.MyBookListService;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class BookController {
     @Autowired
     private BookService service;
+    @Autowired
+    private MyBookListService myBookService;
     @GetMapping("/")
     public String home() {
         return "home";
@@ -36,4 +45,18 @@ public class BookController {
         service.save(b);
         return "redirect:/book_list";
     }
+
+    @GetMapping("/my_book_list")
+    public String getMyBookList() {
+        return "myBookList";
+        
+    }
+    @RequestMapping("/myList/{id}")
+    public String getMyList(@PathVariable("id") int id) {
+        Book b = service.getBookById(id);
+        MyBookList mb= new MyBookList(b.getId(),b.getName(),b.getAuthor(),b.getPrice());
+        myBookService.saveMyBooks(mb);
+        return "redirect://my_book_list";
+    }
+    
 }
