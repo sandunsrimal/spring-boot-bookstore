@@ -13,13 +13,18 @@ public class Book {
     private String name;
     private String author;
     private String price;
+    private String image;
    
-    public Book(int id, String name, String author, String price) {
+   
+
+    public Book(int id, String name, String author, String price, String image) {
         super();
         this.id = id;
         this.name = name;
         this.author = author;
         this.price = price;
+        this.image = image;
+
     }
 
     public Book() {
@@ -56,6 +61,13 @@ public class Book {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+     public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
 

@@ -9,18 +9,23 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.example.bookstore.entity.Book;
 import com.example.bookstore.entity.MyBookList;
+import com.example.bookstore.entity.User;
 import com.example.bookstore.service.BookService;
+import com.example.bookstore.service.UserService;
 import com.example.bookstore.service.MyBookListService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @Controller
 public class BookController {
     @Autowired
     private BookService service;
+
+     @Autowired
+    private UserService userservice;
+
     @Autowired
     private MyBookListService myBookService;
     @GetMapping("/")
@@ -31,6 +36,10 @@ public class BookController {
     public String bookRegister() {
         return "bookRegister";
     }
+        @GetMapping("/register")
+    public String userRegister() {
+        return "register";
+    }
     @GetMapping("/book_list")
     public ModelAndView getAllBooks() {
         List<Book> list = service.getAllBooks();
@@ -40,9 +49,15 @@ public class BookController {
         return new ModelAndView("bookList", "book", list);
     }
 
-    @PostMapping("/save")
+    @PostMapping("/savebook")
     public String addBook(@ModelAttribute Book b) {
-        service.save(b);
+        service.savebook(b);
+        return "redirect:/book_list";
+    }
+
+     @PostMapping("/saveuser")
+    public String addUser(@ModelAttribute User b) {
+        userservice.saveuser(b);
         return "redirect:/book_list";
     }
 

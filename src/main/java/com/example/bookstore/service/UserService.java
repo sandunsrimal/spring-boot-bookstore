@@ -1,29 +1,27 @@
+
+
 package com.example.bookstore.service;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.bookstore.entity.Book;
 import com.example.bookstore.entity.User;
-import com.example.bookstore.repository.BookRepository;
+import com.example.bookstore.repository.UserRepository;
 
 @Service
-public class BookService {
+public class UserService {
 
     @Autowired
-    private BookRepository bRepo;
-    
-    public void savebook(Book b){
+    private UserRepository bRepo;
+    public void saveuser(User b){
         bRepo.save(b);
     }
 
-    public List<Book> getAllBooks(){
+    public List<User> getAllUser(){
         return bRepo.findAll();
     }
-    public Book getBookById(int id) {
+    public User getUserById(int id) {
         return bRepo.findById(id).get();
     }
-
-  
 }
