@@ -29,7 +29,7 @@
   </nav>
   <div class="container my-5 p-5" >
     <h1 class="text-center">Login</h1>
-    <form class="col-md-4 offset-md-4" th:action="@{/userlogin}" method="post">
+    <form class="col-md-4 offset-md-4" th:action="@{/userlogin}" method="get">
 
       <div class="mb-3">
         <label for="username" class="form-label">Username</label>
@@ -47,8 +47,11 @@
       </div>
 
 
-      <center><button type="submit" class="btn btn-primary">Login</button></center>
+      <center><button type="submit" class="btn btn-primary">Login</button></center><br>
+      <center><a href="/register" class="btn btn-primary">Register</a> </center>
+      
     </form>
+    
   </div>
 
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -13,6 +14,7 @@ import com.example.bookstore.entity.User;
 import com.example.bookstore.repository.UserRepository;
 import com.example.bookstore.service.BookService;
 import com.example.bookstore.service.UserService;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.example.bookstore.service.MyBookListService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +29,13 @@ public class BookController {
      @Autowired
     private UserService userservice;
 
-     @Autowired
+     @Autowired(required = true)
     private UserRepository userrepo;
 
     @Autowired
     private MyBookListService myBookService;
-    @GetMapping("/")
+
+    @GetMapping("/home")
     public String home() {
         return "home";
     }
@@ -44,8 +47,10 @@ public class BookController {
     public String userRegister() {
         return "register";
     }
-         @GetMapping("/login")
-    public String Login() {
+         @GetMapping("/")
+    public String Login(Model model) {
+        User user = new User();
+        model.addAttribute("user", user);
         return "login";
     }
     @GetMapping("/book_list")
@@ -66,19 +71,20 @@ public class BookController {
      @PostMapping("/saveuser")
     public String addUser(@ModelAttribute User b) {
         userservice.saveuser(b);
-        return "redirect:/login";
+        return "redirect:/";
     }
 
     @GetMapping("/userlogin")
     public String loginUser(@ModelAttribute("user") User user) {
+       System.out.println("login user");
        System.out.println(user.getUsername());
        System.out.println(user.getPassword());
        String username=user.getUsername();
-       User userdata = userrepo.findByUsername(username);
+       User userdata = this.userrepo.findByUsername(username);
        if(user.getPassword().equals(userdata.getPassword())){
-        return "redirect:/book_list";
+        return "redirect:/home";
        }else{
-        return "redirect:/login";
+        return "redirect:/";
        }
         
     }

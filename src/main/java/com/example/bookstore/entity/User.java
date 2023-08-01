@@ -48,5 +48,8 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+    public User get() {
+        return null;
+    }
     
 }

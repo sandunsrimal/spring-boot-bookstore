@@ -14,6 +14,7 @@ public class UserService {
 
     @Autowired
     private UserRepository bRepo;
+
     public void saveuser(User b){
         bRepo.save(b);
     }
@@ -22,6 +23,6 @@ public class UserService {
         return bRepo.findAll();
     }
     public User getUserByUsername(String username) {
-        return bRepo.findByUsername(username).get();
+        return bRepo.findByUsername(username);
     }
 }
