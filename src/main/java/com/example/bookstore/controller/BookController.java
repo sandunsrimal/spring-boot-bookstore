@@ -40,6 +40,10 @@ public class BookController {
     public String userRegister() {
         return "register";
     }
+         @GetMapping("/login")
+    public String Login() {
+        return "login";
+    }
     @GetMapping("/book_list")
     public ModelAndView getAllBooks() {
         List<Book> list = service.getAllBooks();
@@ -58,7 +62,7 @@ public class BookController {
      @PostMapping("/saveuser")
     public String addUser(@ModelAttribute User b) {
         userservice.saveuser(b);
-        return "redirect:/book_list";
+        return "redirect:/login";
     }
 
     @GetMapping("/my_book_list")
