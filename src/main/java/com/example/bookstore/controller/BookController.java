@@ -90,7 +90,9 @@ public class BookController {
     }
 
     @GetMapping("/my_book_list")
-    public String getMyBookList() {
+    public String getMyBookList(Model model) {
+        List<MyBookList>list =myBookService.getAllBooks();
+        model.addAttribute("book",list);
         return "myBookList";
         
     }
@@ -99,7 +101,20 @@ public class BookController {
         Book b = service.getBookById(id);
         MyBookList mb= new MyBookList(b.getId(),b.getName(),b.getAuthor(),b.getPrice());
         myBookService.saveMyBooks(mb);
-        return "redirect://my_book_list";
+        return "redirect:/my_book_list";
     }
-    
+
+    @RequestMapping("/editBook/{id}")
+    public String editBook(@PathVariable("id") int id,Model model) {
+        Book b=service.getBookById(id);
+        model.addAttribute("book",b);
+        return "bookEdit";
+    }
+    @RequestMapping("/deleteBook/{id}")
+    public String deleteBook(@PathVariable("id")int id) {
+        service.deleteById(id);
+        return "redirect:/book_list";
+    }
+
+
 }
