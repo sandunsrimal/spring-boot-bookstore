@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bookstore</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .card {
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .card-body {
+                padding: 40px;
+            }
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+            .btn-primary:hover {
+                background-color: #0069d9;
+                border-color: #0062cc;
+            }
+            .btn-danger {
+                background-color: #dc3545;
+                border-color: #dc3545;
+            }
+            .btn-danger:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+            }
+            .rounded-circle {
+                border: 5px solid #fff;
+            }
+            img{
+                object-fit: cover;
+                aspect-ratio: 2/1;
+            }
+        </style>
+    </head>
+    <body>
+        <header th:insert="fragments/general.html :: header"> </header>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" th:href="@{/}">Book Store</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/books}">View Book List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/favorites}">View Favorites</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()" class="nav-item dropdown">
+                            <a class="nav-link ml-auto dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="rounded-circle user-image mr-2" width="32" src="" th:src="${user.get('picture')}"
+                                    th:attr="alt=${user.get('name')}">
+                                <span th:text="${user.get('name')}"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                            </ul>
+                        </li>
+                        <li sec:authorize="!isAuthenticated()" class="nav-item">
+                            <a class="nav-link ml-auto btn btn-success" th:href="@{/oauth2/authorization/auth0}">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-5">
+            <a th:href="@{/books/new}" class="btn btn-info">Add New Book</a>
+            <h1>Book List</h1>
+            <div class="table-responsive">
+                <table class="table table-striped" aria-describedby="list of books">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Publisher</th>
+                            <th>ISBN</th>
+                            <th>Category</th>
+                            <th>Language</th>
+                            <th>Pages</th>
+                            <th>Price</th>
+                            <th>Format</th>
+                            <th>Edition</th>
+                            <th>Description</th>
+                            <th>Image</th>
+                            <th>Delete</th>
+                            <th>Edit</th>
+                            <th>Favorite</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="book : ${BookList}">
+                            <td th:text="${book.title}"></td>
+                            <td th:text="${book.author}"></td>
+                            <td th:text="${book.publisher}"></td>
+                            <td th:text="${book.isbn}"></td>
+                            <td th:text="${book.category}"></td>
+                            <td th:text="${book.language}"></td>
+                            <td th:text="${book.pages}"></td>
+                            <td th:text="${book.price}"></td>
+                            <td th:text="${book.format}"></td>
+                            <td th:text="${book.edition}"></td>
+                            <td th:text="${book.description}"></td>
+                            <td><img th:src="${book.imageUrl}" alt="Book Cover" style="max-width: 100px;"></td>
+                            <td>
+                                <button class="btn btn-danger delete-buttons" data-id="" th:attr="data-id=${book.id}">Delete</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary edit-buttons" data-id="" th:attr="data-id=${book.id}">Edit</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary fav-buttons" data-id="" th:attr="data-id=${book.id}">Add to Favorite</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            const deleteButtons = document.querySelectorAll('.delete-buttons');
+            const editButtons = document.querySelectorAll('.edit-buttons');
+            const favButtons = document.querySelectorAll('.fav-buttons');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    confirmDelete(button.dataset.id);
+                });
+            });
+
+            editButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    editBook(button.dataset.id);
+                });
+            });
+
+            favButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    addToFavorites(button.dataset.id);
+                });
+            });
+
+            function confirmDelete(id) {
+                if (confirm("Are you sure you want to delete this book?")) {
+                    fetch(`/books/api/v2/${id}/delete`, {
+                        method: 'GET'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert("Failed to delete book.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Failed to delete book.");
+                    });
+                }
+            }
+
+            function addToFavorites(id) {
+                fetch(`/favorites/api/v2/new/${id}`, {
+                    method: 'GET'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert("Book added to favorites.");
+                    } else {
+                        response.text().then(text => {
+                            alert(`Failed to add book to favorites.\n${text}`);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Failed to add book to favorites.");
+                });
+            }
+
+            function editBook(id) {
+                window.location.href = `/books/${id}`;
+            }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        
+    </body>
+</html>
