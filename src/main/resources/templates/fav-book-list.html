@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bookstore</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .card {
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .card-body {
+                padding: 40px;
+            }
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+            .btn-primary:hover {
+                background-color: #0069d9;
+                border-color: #0062cc;
+            }
+            .btn-danger {
+                background-color: #dc3545;
+                border-color: #dc3545;
+            }
+            .btn-danger:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+            }
+            .rounded-circle {
+                border: 5px solid #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <header th:insert="fragments/general.html :: header"> </header>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" th:href="@{/}">Book Store</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/books}">View Book List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/favorites}">View Favorites</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()" class="nav-item dropdown">
+                            <a class="nav-link ml-auto dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="rounded-circle user-image mr-2" width="32" alt="" th:src="${user.get('picture')}"
+                                    th:attr="alt=${user.get('name')}">
+                                <span th:text="${user.get('name')}"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                            </ul>
+                        </li>
+                        <li sec:authorize="!isAuthenticated()" class="nav-item">
+                            <a class="nav-link ml-auto btn btn-success" th:href="@{/oauth2/authorization/auth0}">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-5">
+            <h1>My favorite Books</h1>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Publisher</th>
+                            <th>ISBN</th>
+                            <th>Category</th>
+                            <th>Language</th>
+                            <th>Pages</th>
+                            <th>Price</th>
+                            <th>Format</th>
+                            <th>Edition</th>
+                            <th>Description</th>
+                            <th>Image</th>
+                            <th>Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="book : ${BookList}">
+                            <td th:text="${book.title}"></td>
+                            <td th:text="${book.author}"></td>
+                            <td th:text="${book.publisher}"></td>
+                            <td th:text="${book.isbn}"></td>
+                            <td th:text="${book.category}"></td>
+                            <td th:text="${book.language}"></td>
+                            <td th:text="${book.pages}"></td>
+                            <td th:text="${book.price}"></td>
+                            <td th:text="${book.format}"></td>
+                            <td th:text="${book.edition}"></td>
+                            <td th:text="${book.description}"></td>
+                            <td><img th:src="${book.imageUrl}" alt="Book Cover" style="max-width: 100px;"></td>
+                            <td>
+                                <button class="btn btn-danger delete-buttons" data-id="" th:attr="data-id=${book.id}">Remove from favorites</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            const deleteButtons = document.querySelectorAll('.delete-buttons');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    confirmDelete(button.dataset.id);
+                });
+            });
+
+            function confirmDelete(id) {
+                if (confirm("Are you sure you want to delete this book?")) {
+                    fetch(`/favorites/api/v2/${id}/delete`, {
+                        method: 'GET'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload();
+                        } else {
+                            alert("Failed to delete book.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Failed to delete book.");
+                    });
+                }
+            }
+
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+        
+    </body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bookstore</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .card {
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .card-body {
+                padding: 40px;
+            }
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+            .btn-primary:hover {
+                background-color: #0069d9;
+                border-color: #0062cc;
+            }
+            .btn-danger {
+                background-color: #dc3545;
+                border-color: #dc3545;
+            }
+            .btn-danger:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+            }
+            .rounded-circle {
+                border: 5px solid #fff;
+            }
+        </style>
+    </head>
+    <body>
+        <header th:insert="fragments/general.html :: header"> </header>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" th:href="@{/}">Book Store</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/books}">View Book List</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/favorites}">View Favorites</a>
+                        </li>
+                        <li sec:authorize="isAuthenticated()" class="nav-item dropdown">
+                            <a class="nav-link ml-auto dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="rounded-circle user-image mr-2" alt="" width="32" th:src="${user.get('picture')}"
+                                    th:attr="alt=${user.get('name')}">
+                                <span th:text="${user.get('name')}"></span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                            </ul>
+                        </li>
+                        <li sec:authorize="!isAuthenticated()" class="nav-item">
+                            <a class="nav-link ml-auto btn btn-success" th:href="@{/oauth2/authorization/auth0}">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Add a New Book</h3>
+                            <form method="POST" th:action="@{/books/api/v2/new}" th:object="${book}">
+                                <div class="form-group mb-3">
+                                    <label for="title">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title" required th:field="*{title}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="author">Author</label>
+                                    <input type="text" class="form-control" id="author" name="author" required th:field="*{author}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="publisher">Publisher</label>
+                                    <input type="text" class="form-control" id="publisher" name="publisher" required th:field="*{publisher}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="isbn">ISBN</label>
+                                    <input type="text" class="form-control" id="isbn" name="isbn" required th:field="*{isbn}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="category">Category</label>
+                                    <input type="text" class="form-control" id="category" name="category" required th:field="*{category}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="language">Language</label>
+                                    <input type="text" class="form-control" id="language" name="language" required th:field="*{language}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="pages">Pages</label>
+                                    <input type="number" class="form-control" id="pages" name="pages" required th:field="*{pages}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="price">Price</label>
+                                    <input type="number" class="form-control" id="price" name="price" required th:field="*{price}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="format">Format</label>
+                                    <input type="text" class="form-control" id="format" name="format" required th:field="*{format}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="edition">Edition</label>
+                                    <input type="text" class="form-control" id="edition" name="edition" required th:field="*{edition}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="3" required th:field="*{description}"></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="imageUrl">Image URL</label>
+                                    <input type="text" class="form-control" id="imageUrl" name="imageUrl" required th:field="*{imageUrl}">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add Book</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </body>
+</html>

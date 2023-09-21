@@ -3,118 +3,78 @@ package com.example.bookstore.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.example.bookstore.entity.Book;
-import com.example.bookstore.entity.MyBookList;
-import com.example.bookstore.entity.User;
-import com.example.bookstore.repository.UserRepository;
+import com.example.bookstore.model.Book;
 import com.example.bookstore.service.BookService;
-import com.example.bookstore.service.UserService;
-import com.fasterxml.jackson.annotation.JsonCreator.Mode;
-import com.example.bookstore.service.MyBookListService;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-
-
 
 @Controller
+@RequestMapping("/books")
 public class BookController {
-    @Autowired
-    private BookService service;
-
-     @Autowired
-    private UserService userservice;
-
-     @Autowired(required = true)
-    private UserRepository userrepo;
 
     @Autowired
-    private MyBookListService myBookService;
+    private BookService bookService;
 
-    @GetMapping("/home")
-    public String home() {
-        return "home";
-    }
-    @GetMapping("/book_register")
-    public String bookRegister() {
-        return "bookRegister";
-    }
-        @GetMapping("/register")
-    public String userRegister() {
-        return "register";
-    }
-         @GetMapping("/")
-    public String Login(Model model) {
-        User user = new User();
-        model.addAttribute("user", user);
-        return "login";
-    }
-    @GetMapping("/book_list")
-    public ModelAndView getAllBooks() {
-        List<Book> list = service.getAllBooks();
-        // ModelAndView m= new ModelAndView();
-        // m.setViewName("bookList");
-        // m.addObject("book",list);
-        return new ModelAndView("bookList", "book", list);
+    // GET all books
+    @GetMapping
+    public String getAllBooks(Model model, @AuthenticationPrincipal OidcUser user) {
+        if (user != null) {
+            model.addAttribute("user", user.getClaims());
+        }
+        List<Book> books = bookService.getAllBooks();
+        model.addAttribute("BookList", books);
+        return "book-list";
     }
 
-    @PostMapping("/savebook")
-    public String addBook(@ModelAttribute Book b) {
-        service.savebook(b);
-        return "redirect:/book_list";
+    // GET book by id
+    @GetMapping("/{id}")
+    public String getBookById(@PathVariable Long id, Model model, @AuthenticationPrincipal OidcUser user) {
+        if (user != null) {
+            model.addAttribute("user", user.getClaims());
+        }
+        Book book = bookService.getBookById(id);
+        model.addAttribute("book", book);
+        return "book-details";
     }
 
-     @PostMapping("/saveuser")
-    public String addUser(@ModelAttribute User b) {
-        userservice.saveuser(b);
-        return "redirect:/";
+    // CREATE a new book
+    @GetMapping("/new")
+    public String createBookForm(Model model, @AuthenticationPrincipal OidcUser user) {
+        if (user != null) {
+            model.addAttribute("user", user.getClaims());
+        }
+        model.addAttribute("book", new Book());
+        return "book-form";
     }
 
-    @GetMapping("/userlogin")
-    public String loginUser(@ModelAttribute("user") User user) {
-       System.out.println("login user");
-       System.out.println(user.getUsername());
-       System.out.println(user.getPassword());
-       String username=user.getUsername();
-       User userdata = this.userrepo.findByUsername(username);
-       if(user.getPassword().equals(userdata.getPassword())){
-        return "redirect:/home";
-       }else{
-        return "redirect:/";
-       }
-        
+    @PostMapping("/api/v2/new")
+    public String createBook(@ModelAttribute Book book) {
+        bookService.createBook(book);
+        return "redirect:/books";
     }
 
-    @GetMapping("/my_book_list")
-    public String getMyBookList(Model model) {
-        List<MyBookList>list =myBookService.getAllBooks();
-        model.addAttribute("book",list);
-        return "myBookList";
-        
-    }
-    @RequestMapping("/myList/{id}")
-    public String getMyList(@PathVariable("id") int id) {
-        Book b = service.getBookById(id);
-        MyBookList mb= new MyBookList(b.getId(),b.getName(),b.getAuthor(),b.getPrice());
-        myBookService.saveMyBooks(mb);
-        return "redirect:/my_book_list";
+    // UPDATE an existing book
+    @GetMapping("/api/v2/{id}/edit")
+    public String updateBookForm(@PathVariable Long id, Model model) {
+        Book book = bookService.getBookById(id);
+        model.addAttribute("book", book);
+        return "book-form";
     }
 
-    @RequestMapping("/editBook/{id}")
-    public String editBook(@PathVariable("id") int id,Model model) {
-        Book b=service.getBookById(id);
-        model.addAttribute("book",b);
-        return "bookEdit";
-    }
-    @RequestMapping("/deleteBook/{id}")
-    public String deleteBook(@PathVariable("id")int id) {
-        service.deleteById(id);
-        return "redirect:/book_list";
+    @PostMapping("/api/v2/{id}/edit")
+    public String updateBook(@PathVariable Long id, @ModelAttribute Book book) {
+        bookService.updateBook(id, book);
+        return "redirect:/books";
     }
 
-
+    // DELETE a book
+    @GetMapping("/api/v2/{id}/delete")
+    public String deleteBook(@PathVariable Long id) {
+        bookService.deleteBook(id);
+        return "redirect:/books";
+    }   
 }
