@@ -5,10 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Bookstore</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <script src="https://kit.fontawesome.com/18a81f2903.js" crossorigin="anonymous"></script>
         <style>
             body {
                 background-color: #f8f9fa;
             }
+
             .card {
                 border: none;
                 border-radius: 10px;
@@ -36,6 +38,16 @@
             .rounded-circle {
                 border: 5px solid #fff;
             }
+            .container{
+                width: 80%;
+            }
+            i{
+                margin:0px 7px 0px 7px;
+            }
+            #navbarNav{
+                display: flex;
+                justify-content: end;
+            }
         </style>
     </head>
     <body>
@@ -51,10 +63,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/books}">View Book List</a>
+                            <a class="nav-link" th:href="@{/books}"><i class="fa-solid fa-display"></i>View Book List</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/favorites}">View Favorites</a>
+                            <a class="nav-link" th:href="@{/favorites}"><i class="fa-solid fa-crown"></i>View Favorites</a>
                         </li>
                         <li sec:authorize="isAuthenticated()" class="nav-item dropdown">
                             <a class="nav-link ml-auto dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -64,7 +76,7 @@
                                 <span th:text="${user.get('name')}"></span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                                <li><a class="dropdown-item" th:href="@{/logout}"><i class="fa-solid fa-right-to-bracket"></i>Logout</a></li>
                             </ul>
                         </li>
                         <li sec:authorize="!isAuthenticated()" class="nav-item">
