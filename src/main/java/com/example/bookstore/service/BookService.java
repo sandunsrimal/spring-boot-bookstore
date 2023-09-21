@@ -1,33 +1,24 @@
 package com.example.bookstore.service;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import com.example.bookstore.entity.Book;
+import com.example.bookstore.model.Book;
 
-import com.example.bookstore.repository.BookRepository;
+public interface BookService {
 
-@Service
-public class BookService {
+    void createBook(Book book);
 
-    @Autowired
-    private BookRepository bRepo;
-    
-    public void savebook(Book b){
-        bRepo.save(b);
-    }
+    List<Book> getAllBooks();
 
-    public List<Book> getAllBooks(){
-        return bRepo.findAll();
-    }
-    public Book getBookById(int id) {
-        return bRepo.findById(id).get();
-    }
+    Book getBookById(long id);
 
-    public void deleteById(int id) {
-        bRepo.deleteById(id);
-    }
+    void deleteBook(long id);
 
-  
+    void updateBook(Long id, Book book);
+
+    public List<Book> getRecentBooks();
+
+    public long getBookCount();
+
+
 }
