@@ -1,0 +1,16 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: V61U3NIR4QYMVO7n0J3Yl16ZSLkLYEhf
+            client-secret: 0-azEVPYgw3aRzJYE-7S_HPBsQBYBHKTgnlpS2QaiUVlimRQOfkA40I-d9bV1ATx
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # trailing slash is important!
+            issuer-uri: https://booklib.us.auth0.com/
