@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    container_name: bookdb
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: efffectivepassword
+      MYSQL_DATABASE: book
+    networks:
+      springboot-mysql-net:
+
+  springboot-backend:
+    container_name: springboot-bookstore
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+    networks:
+      springboot-mysql-net:
+    restart: on-failure
+
+networks:
+  springboot-mysql-net:
