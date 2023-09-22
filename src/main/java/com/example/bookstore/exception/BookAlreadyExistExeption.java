@@ -1,4 +1,4 @@
-package com.example.bookstore.exeption;
+package com.example.bookstore.exception;
 
 public class BookAlreadyExistExeption extends Exception {
     

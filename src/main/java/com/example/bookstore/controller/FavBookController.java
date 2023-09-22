@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.bookstore.model.Book;
 import com.example.bookstore.service.BookService;
 import com.example.bookstore.service.FavoriteBookService;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/favorites")
@@ -43,16 +40,15 @@ public class FavBookController {
     }
 
     @GetMapping("/api/v2/new/{id}")
-    public ResponseEntity<?> createBook(@PathVariable Long id, @AuthenticationPrincipal OidcUser user,
-            HttpServletResponse response) {
+    public ResponseEntity<String> createBook(@PathVariable Long id, @AuthenticationPrincipal OidcUser user) {
         if (user != null) {
             try {
                 favoriteBookService.saveMyBooks(id, user);
             } catch (Exception e) {
-                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body(e.getMessage());
             }
         }
-        return new ResponseEntity<>("Book added to favorites", HttpStatus.OK);
+        return ResponseEntity.ok("Book added to favorites");
     }
 
     // DELETE a book

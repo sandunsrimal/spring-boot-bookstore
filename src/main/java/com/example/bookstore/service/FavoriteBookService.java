@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
-import com.example.bookstore.exeption.BookAlreadyExistExeption;
+import com.example.bookstore.exception.BookAlreadyExistExeption;
 import com.example.bookstore.model.FavoriteBook;
 
 public interface FavoriteBookService {

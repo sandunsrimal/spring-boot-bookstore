@@ -1,12 +1,13 @@
 package com.example.bookstore.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
-import com.example.bookstore.exeption.BookAlreadyExistExeption;
+import com.example.bookstore.exception.BookAlreadyExistExeption;
 import com.example.bookstore.model.FavoriteBook;
 import com.example.bookstore.repository.FavoriteBookRepository;
 
@@ -34,7 +35,7 @@ public class FavoriteBookServiceImpl implements FavoriteBookService {
     @Override
     public List<FavoriteBook> getAllBooks(OidcUser user) {
         if (user == null) {
-            return null;
+            return new ArrayList<>();
         }
         return repo.findByUserid(user.getUserInfo().getSubject());
     }
