@@ -65,10 +65,7 @@
     <div class="container mt-5">
         <form method="post" th:action="@{/books/api/v2/{id}/edit(id=${book.id})}" th:object="${book}">
             <div class="bookbox row">
-                <img class="book-cover"
-                    src="https://img.freepik.com/free-psd/books-stack-icon-isolated-3d-render-illustration_47987-15482.jpg?w=740&amp;t=st=1695334581~exp=1695335181~hmac=185697c4e3a6872bc4580c6290fa88ecdefc7c8ac00ba0444719c491845c56e5"
-                    alt="Book Cover">
-
+                <img class="book-img" th:src="${book.imageUrl}" alt="Book Cover">
                 <div class="form-group mb-3">
                     <label for="title"> </label>
                     <input type="hidden" id="id" name="id" th:value="${book.id}">
