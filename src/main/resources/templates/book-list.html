@@ -95,7 +95,8 @@
                         <td th:text="${book.price}"></td>
                         <td th:text="${book.format}"></td>
                         <td th:text="${book.edition}"></td>
-                        <td th:text="${book.description}"></td>
+                        
+                        <td th:text="${#strings.length(book.description) > 12 ? #strings.substring(book.description, 0, 12) : book.description}"></td>
                         <td><img th:src="${book.imageUrl}" alt="Book Cover" class="img-fluid book-img"></td>
                         <td>
                             <button class="btn btn-danger delete-buttons" data-id="" th:attr="data-id=${book.id}"><i
